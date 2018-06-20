@@ -1,3 +1,5 @@
+package emums;
+
 /**
  * @Author:Jrss
  * @Desp:卡券类型

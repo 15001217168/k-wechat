@@ -1,3 +1,5 @@
+package emums;
+
 /**
  * @Author:Jrss
  * @Desp:支付类型

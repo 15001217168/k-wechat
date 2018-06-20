@@ -1,3 +1,5 @@
+package emums;
+
 /**
  * @Author:Jrss
  * @Desp:上传媒体文件类型
