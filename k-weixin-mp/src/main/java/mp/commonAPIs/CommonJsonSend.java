@@ -1,5 +1,6 @@
 package mp.commonAPIs;
 
+import weixin.commonAPIs.BaseCommonJsonSend;
 import weixin.entities.jsonResult.WxJsonResult;
 import weixin.enums.CommonJsonSendType;
 
@@ -14,10 +15,10 @@ public class CommonJsonSend {
      * @Author:Jrss
      * @Desp:向需要AccessToken的API发送消息的公共方法
      */
-    public static WxJsonResult Send(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult) {
+    public static WxJsonResult send(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult) {
         WxJsonResult result = null;
         try {
-            result = CommonJsonSend.Send(accessToken, urlFormat, data, sendType, timeOut,
+            result = BaseCommonJsonSend.send(accessToken, urlFormat, data, sendType, timeOut,
                     checkValidationResult);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -29,11 +30,15 @@ public class CommonJsonSend {
      * @Author:Jrss
      * @Desp:向需要AccessToken的API发送消息的公共方法
      */
-    public static T Send<T>(String accessToken, String urlFormat,
-    Object data,CommonJsonSendType sendType, int timeOut, checkValidationResult )
+    public static <T> T doSend(
+            String accessToken, String
+            urlFormat,
+            Object data, CommonJsonSendType
+                    sendType,
+            int timeOut, boolean checkValidationResult)
 
     {
-        return CommonJsonSend.Send < T > (accessToken,
-        urlFormat, data, sendType, timeOut, checkValidationResult);
+        return BaseCommonJsonSend.doSend(accessToken,
+                urlFormat, data, sendType, timeOut, checkValidationResult);
     }
 }

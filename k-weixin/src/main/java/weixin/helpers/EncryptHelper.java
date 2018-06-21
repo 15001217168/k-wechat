@@ -1,6 +1,7 @@
 package weixin.helpers;
 
 import sun.misc.BASE64Encoder;
+import weixin.enums.ReturnCode;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -91,6 +92,7 @@ public class EncryptHelper {
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             BASE64Encoder base64en = new BASE64Encoder();
+
             //加密后的字符串
             String newstr = base64en.encode(md5.digest(encypStr.getBytes()));
             return newstr.toUpperCase();

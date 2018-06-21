@@ -1,5 +1,6 @@
 package weixin.utilities.httpUtility;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
@@ -37,10 +38,11 @@ public class Get {
      * @Author:Jrss
      * @Desp:ET方式请求URL，并返回T类型
      */
-    public static String GetJson(String url) {
+    public static <T> T GetJson(String url) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         String resultText = "";
+        T result = null;
         try {
             // 通过址默认配置创建一个httpClient实例
             httpClient = HttpClients.createDefault();
@@ -61,6 +63,14 @@ public class Get {
             HttpEntity entity = response.getEntity();
             // 通过EntityUtils中的toString方法将结果转换为字符串
             resultText = EntityUtils.toString(entity);
+            //可能发生错误
+            ObjectMapper mapper = new ObjectMapper();
+//        当反序列化json时，未知属性会引起的反序列化被打断，这里我们禁用未知属性打断反序列化功能，
+//        因为，例如json里有10个属性，而我们的bean中只定义了2个属性，其它8个属性将被忽略
+            mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+            result = mapper.readValue(resultText, new TypeReference<T>() {
+            });
 
         } catch (ClientProtocolException e) {
             e.printStackTrace();
@@ -83,6 +93,6 @@ public class Get {
                 }
             }
         }
-        return resultText;
+        return result;
     }
 }

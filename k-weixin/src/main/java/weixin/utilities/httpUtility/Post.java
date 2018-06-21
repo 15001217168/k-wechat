@@ -1,6 +1,10 @@
 package weixin.utilities.httpUtility;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -14,7 +18,7 @@ import weixin.GlobalConf;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.stream.Stream;
+import java.util.*;
 
 /**
  * @Author:Jrss
@@ -24,14 +28,14 @@ import java.util.stream.Stream;
  */
 public class Post {
     /**
-    *@Author:Jrss
-    *@Desp:发起Post请求
-    */
-    public static <T> T PostGetJson(String url, CookieContainer cookieContainer = null, Stream fileStream = null, Encoding encoding = null, X509Certificate2 cer = null, bool useAjax = false, int timeOut = Config.TIME_OUT, bool checkValidationResult = false)
-    {
+     * @Author:Jrss
+     * @Desp:发起Post请求
+     */
+    public static <T> T PostGetJson(String url, Map<String, Object> paramMap) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
-        String result = "";
+        String resultText = "";
+        T result = null;
         // 创建httpClient实例
         httpClient = HttpClients.createDefault();
         // 创建httpPost远程连接实例
@@ -49,27 +53,35 @@ public class Post {
         if (null != paramMap && paramMap.size() > 0) {
             List<NameValuePair> nvps = new ArrayList<NameValuePair>();
             // 通过map集成entrySet方法获取entity
-            Set<Entry<String, Object>> entrySet = paramMap.entrySet();
+            Set<Map.Entry<String, Object>> entrySet = paramMap.entrySet();
             // 循环遍历，获取迭代器
-            Iterator<Entry<String, Object>> iterator = entrySet.iterator();
+            Iterator<Map.Entry<String, Object>> iterator = entrySet.iterator();
             while (iterator.hasNext()) {
-                Entry<String, Object> mapEntry = iterator.next();
+                Map.Entry<String, Object> mapEntry = iterator.next();
                 nvps.add(new BasicNameValuePair(mapEntry.getKey(), mapEntry.getValue().toString()));
             }
-
             // 为httpPost设置封装好的请求参数
             try {
                 httpPost.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
+
         }
         try {
             // httpClient对象执行post请求,并返回响应参数对象
             httpResponse = httpClient.execute(httpPost);
             // 从响应对象中获取响应内容
             HttpEntity entity = httpResponse.getEntity();
-            result = EntityUtils.toString(entity);
+            resultText = EntityUtils.toString(entity);
+
+            ObjectMapper mapper = new ObjectMapper();
+//        当反序列化json时，未知属性会引起的反序列化被打断，这里我们禁用未知属性打断反序列化功能，
+//        因为，例如json里有10个属性，而我们的bean中只定义了2个属性，其它8个属性将被忽略
+            mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+
+            result = mapper.readValue(resultText, new TypeReference<T>() {
+            });
         } catch (ClientProtocolException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -92,11 +104,5 @@ public class Post {
             }
         }
         return result;
-//        string returnText = RequestUtility.HttpPost(url, cookieContainer, fileStream, null, null, encoding, cer, useAjax, timeOut, checkValidationResult);
-//
-//        WeixinTrace.SendApiLog(url, returnText);
-//
-//        var result = GetResult<T>(returnText);
-//        return result;
     }
 }

@@ -1,6 +1,8 @@
 package mp.advancedAPIs.oAuth;
 
 import mp.advancedAPIs.oAuth.oAuthJson.OAuthAccessTokenResult;
+import mp.advancedAPIs.oAuth.oAuthJson.OAuthUserInfo;
+import mp.advancedAPIs.oAuth.oAuthJson.RefreshTokenResult;
 import mp.commonAPIs.CommonJsonSend;
 import mp.emums.EnumsOAuthScope;
 import weixin.GlobalConf;
@@ -45,41 +47,39 @@ public class OAuthApi {
                 String.format(GlobalConf.ApiMpHost + "/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=%s",
                         StringHelper.getUrlData(appId), StringHelper.getUrlData(secret), StringHelper.getUrlData(code), StringHelper.getUrlData(grantType));
 
-        return CommonJsonSend.Send < OAuthAccessTokenResult > (null,url, null, CommonJsonSendType.GET);
+        return (OAuthAccessTokenResult) CommonJsonSend.send(null, url, null, CommonJsonSendType.GET, 0, true);
     }
 
     /**
      * @Author:Jrss
      * @Desp:刷新（OAuth专用）access_token（如果需要）
      */
-    public static RefreshTokenResult RefreshToken(string appId, string refreshToken, string grantType ="refresh_token") {
-        var url =
-                string.Format(Config.ApiMpHost + "/sns/oauth2/refresh_token?appid={0}&grant_type={1}&refresh_token={2}",
-                        appId.AsUrlData(), grantType.AsUrlData(), refreshToken.AsUrlData());
+    public static RefreshTokenResult RefreshToken(String appId, String refreshToken, String grantType) {
+        if (grantType == null || grantType.equalsIgnoreCase("")) {
+            grantType = "refresh_token";
+        }
+        String url =
+                String.format(GlobalConf.ApiMpHost + "/sns/oauth2/refresh_token?appid=%s&grant_type=%s&refresh_token=%s",
+                        StringHelper.getUrlData(appId), StringHelper.getUrlData(grantType), StringHelper.getUrlData(refreshToken));
 
-        return CommonJsonSend.Send < RefreshTokenResult > (null,url, null, CommonJsonSendType.GET);
+        return (RefreshTokenResult) CommonJsonSend.send(null, url, null, CommonJsonSendType.GET, 0, true);
     }
 
-    /// <summary>
-    /// 获取用户基本信息
-    /// </summary>
-    /// <param name="oauthAccessToken">调用接口凭证（OAuth专用）</param>
-    /// <param name="openId">普通用户的标识，对当前公众号唯一</param>
-    /// <param name="lang">返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语</param>
-    /// <returns></returns>
-    public static OAuthUserInfo GetUserInfo(string oauthAccessToken, string openId, Language lang =Language.zh_CN) {
-        var url = string.Format(Config.ApiMpHost + "/sns/userinfo?access_token={0}&openid={1}&lang={2}", oauthAccessToken.AsUrlData(), openId.AsUrlData(), lang.ToString("g").AsUrlData());
-        return CommonJsonSend.Send < OAuthUserInfo > (null,url, null, CommonJsonSendType.GET);
+    /**
+     * @Author:Jrss
+     * @Desp:获取用户基本信息
+     */
+    public static OAuthUserInfo GetUserInfo(String oauthAccessToken, String openId, String lang) {
+        String url = String.format(GlobalConf.ApiMpHost + "/sns/userinfo?access_token=%s&openid=%s&lang=%s", StringHelper.getUrlData(oauthAccessToken), StringHelper.getUrlData(openId), StringHelper.getUrlData(lang));
+        return (OAuthUserInfo) CommonJsonSend.doSend(null, url, null, CommonJsonSendType.GET, 0, true);
     }
 
-    /// <summary>
-    /// 检验授权凭证（access_token）是否有效（OAuth专用）
-    /// </summary>
-    /// <param name="oauthAccessToken">调用接口凭证（OAuth专用）</param>
-    /// <param name="openId">用户的唯一标识</param>
-    /// <returns></returns>
-    public static WxJsonResult Auth(string oauthAccessToken, string openId) {
-        var url = string.Format(Config.ApiMpHost + "/sns/auth?access_token={0}&openid={1}", oauthAccessToken.AsUrlData(), openId.AsUrlData());
-        return CommonJsonSend.Send < WxJsonResult > (null,url, null, CommonJsonSendType.GET);
+    /**
+     * @Author:Jrss
+     * @Desp:检验授权凭证（access_token）是否有效（OAuth专用）
+     */
+    public static WxJsonResult Auth(String oauthAccessToken, String openId) {
+        String url = String.format(GlobalConf.ApiMpHost + "/sns/auth?access_token=%s&openid=%s", StringHelper.getUrlData(oauthAccessToken), StringHelper.getUrlData(openId));
+        return CommonJsonSend.send(null, url, null, CommonJsonSendType.GET, 0, true);
     }
 }

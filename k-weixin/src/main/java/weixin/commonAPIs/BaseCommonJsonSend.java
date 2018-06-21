@@ -6,6 +6,9 @@ import weixin.helpers.StringHelper;
 import weixin.utilities.httpUtility.Get;
 import weixin.utilities.httpUtility.Post;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Author:Jrss
  * @Desp:通过CommonJsonSend中的方法调用接口
@@ -17,15 +20,15 @@ public class BaseCommonJsonSend {
      * @Author:Jrss
      * @Desp:向需要AccessToken的API发送消息的公共方法
      */
-    public static WxJsonResult Send(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult) {
-        return Send(accessToken, urlFormat, data, sendType, timeOut, checkValidationResult);
+    public static WxJsonResult send(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult) {
+        return (WxJsonResult) doSend(accessToken, urlFormat, data, sendType, timeOut, checkValidationResult);
     }
 
     /**
      * @Author:Jrss
      * @Desp:向需要AccessToken的API发送消息的公共方法
      */
-    public static <T> T Send(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, bool checkValidationResult)
+    public static <T> T doSend(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult)
 
     {
         try {
@@ -37,25 +40,13 @@ public class BaseCommonJsonSend {
             }
 
             switch (sendType) {
-                case CommonJsonSendType.GET:
-                    return Get.GetJson < T > (url);
-                case CommonJsonSendType.POST:
-                    SerializerHelper serializerHelper = new SerializerHelper();
-                    var jsonString = serializerHelper.GetJsonString(data, jsonSetting);
-                    using(MemoryStream ms = new MemoryStream())
-                {
-                    var bytes = Encoding.UTF8.GetBytes(jsonString);
-                    ms.Write(bytes, 0, bytes.Length);
-                    ms.Seek(0, SeekOrigin.Begin);
-
-                    WeixinTrace.SendApiPostDataLog(url, jsonString);//记录Post的Json数据
-
-                    //PostGetJson方法中将使用WeixinTrace记录结果
-                    return Post.PostGetJson < T > (url,null, ms, timeOut:timeOut, checkValidationResult:
-                    checkValidationResult);
-                }
+                case GET:
+                    return Get.GetJson(url);
+                case POST:
+                    Map<String, Object> post = new HashMap<String, Object>();
+                    return Post.PostGetJson(url, post);
                 default:
-                    throw new ArgumentOutOfRangeException("sendType");
+                    return null;
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
