@@ -30,7 +30,7 @@ public class Get {
      * @Author:Jrss
      * @Desp:获取随机文件名
      */
-    private static String GetRandomFileName() {
+    private static String getRandomFileName() {
         return Calendar.getInstance().getTimeInMillis() + UUID.randomUUID().toString().substring(0, 6);
     }
 
@@ -38,7 +38,7 @@ public class Get {
      * @Author:Jrss
      * @Desp:ET方式请求URL，并返回T类型
      */
-    public static <T> T GetJson(String url) {
+    public static <T> T getJson(String url) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         String resultText = "";

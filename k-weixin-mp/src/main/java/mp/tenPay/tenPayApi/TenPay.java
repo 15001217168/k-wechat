@@ -29,7 +29,7 @@ public class TenPay {
 //        ms.Write(formDataBytes, 0, formDataBytes.Length);
 //        ms.Seek(0, SeekOrigin.Begin);//设置指针读取位置
 
-        String resultXml = RequestUtility.HttpPost(url, null, ms, timeOut);
+        String resultXml ="";// RequestUtility.HttpPost(url, null, ms, timeOut);
         return new TenpayGetSignKeyResult(resultXml);
     }
 }
