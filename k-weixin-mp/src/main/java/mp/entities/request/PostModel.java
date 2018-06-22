@@ -1,4 +1,4 @@
-package mp.Request;
+package mp.entities.request;
 
 import weixin.entities.request.EncryptPostModel;
 

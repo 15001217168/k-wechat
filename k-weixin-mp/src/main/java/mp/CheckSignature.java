@@ -1,6 +1,6 @@
 package mp;
 
-import mp.Request.PostModel;
+import mp.entities.request.PostModel;
 
 /**
  * @Author:Jrss
