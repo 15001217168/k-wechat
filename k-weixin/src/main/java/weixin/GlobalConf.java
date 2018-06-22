@@ -12,4 +12,14 @@ public class GlobalConf {
 
     public final static String ApiMpHost = "https://api.weixin.qq.com";
     public final static int TimeOut = 10000;
+
+    private static boolean useSandBoxPay;
+
+    public static boolean isUseSandBoxPay() {
+        return useSandBoxPay;
+    }
+
+    public static void setUseSandBoxPay(boolean useSandBoxPay) {
+        GlobalConf.useSandBoxPay = useSandBoxPay;
+    }
 }

@@ -4,51 +4,69 @@ import mp.tenPay.RequestHandler;
 
 /**
  * @Author:Jrss
- * @Desp:微信支付提交的XML Data数据[获取验签秘钥API]
- * @Date:Create in 18:05 2018/6/21
+ * @Desp:微信支付提交的XML Data数据[转换短链接]
+ * @Date:Create in 10:52 2018/6/22
  * @Modified By:
  */
-public class TenPayGetSignKeyRequestData {
+public class TenPayShortUrlRequestData {
+    /// 公众账号ID
+    private String AppId;
+
     /// 商户号
     private String MchId;
 
     /// 随机字符串
     private String NonceStr;
 
-    /// 商家订单号
-    private String OutTradeNo;
+    /// 需要转换的URL，签名用原串，传输需URLencode
+    private String LongUrl;
 
     /// 签名类型
     private String SignType;
 
-    /// Key
+    ///
     private String Key;
 
-    public RequestHandler PackageRequestHandler;
-    public String Sign;
+    private RequestHandler PackageRequestHandler;
+    private String Sign;
 
     /**
-    *@Author:Jrss
-    *@Desp:关闭订单 请求参数
-    */
-    public TenPayGetSignKeyRequestData(String mchId, String nonceStr, String key, String signType) {
+     * @Author:Jrss
+     * @Desp:转换短链接 请求参数
+     */
+    public TenPayShortUrlRequestData(String appId, String mchId, String nonceStr,
+                                     String longUrl, String key, String signType) {
+
         if (signType == null || signType.equalsIgnoreCase("")) {
             signType = "MD5";
         }
+        AppId = appId;
         MchId = mchId;
         NonceStr = nonceStr;
         SignType = signType;
+        LongUrl = longUrl;
         Key = key;
+
         //创建支付应答对象
         PackageRequestHandler = new RequestHandler();
         //初始化
         PackageRequestHandler.init();
-
         //设置package订单参数
+        PackageRequestHandler.setParameter("appid", this.AppId); //公众账号ID
         PackageRequestHandler.setParameter("mch_id", this.MchId); //商户号
+        PackageRequestHandler.setParameter("long_url", this.LongUrl); //需要转换的URL
         PackageRequestHandler.setParameter("nonce_str", this.NonceStr); //随机字符串
+        PackageRequestHandler.setParameter("sign_type", this.SignType); //签名类型
         Sign = PackageRequestHandler.createMd5Sign("key", this.Key);
         PackageRequestHandler.setParameter("sign", Sign); //签名
+    }
+
+    public String getAppId() {
+        return AppId;
+    }
+
+    public void setAppId(String appId) {
+        AppId = appId;
     }
 
     public String getMchId() {
@@ -67,12 +85,12 @@ public class TenPayGetSignKeyRequestData {
         NonceStr = nonceStr;
     }
 
-    public String getOutTradeNo() {
-        return OutTradeNo;
+    public String getLongUrl() {
+        return LongUrl;
     }
 
-    public void setOutTradeNo(String outTradeNo) {
-        OutTradeNo = outTradeNo;
+    public void setLongUrl(String longUrl) {
+        LongUrl = longUrl;
     }
 
     public String getSignType() {

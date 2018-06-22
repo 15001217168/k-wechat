@@ -1,54 +1,44 @@
-package mp.tenPay.entities.request;
+package mp.tenPay.entities.request.payBank;
 
 import mp.tenPay.RequestHandler;
 
 /**
  * @Author:Jrss
- * @Desp:微信支付提交的XML Data数据[获取验签秘钥API]
- * @Date:Create in 18:05 2018/6/21
+ * @Desp:查询企业付款银行卡接口 请求参数
+ * @Date:Create in 15:14 2018/6/22
  * @Modified By:
  */
-public class TenPayGetSignKeyRequestData {
+public class TenPayQueryBankRequestData {
     /// 商户号
     private String MchId;
+
+    /// 商户订单号，需保持唯一（只允许数字[0~9]或字母[A~Z]和[a~z]，最短8位，最长32位）
+    private String PartnerTradeNumber;
 
     /// 随机字符串
     private String NonceStr;
 
-    /// 商家订单号
-    private String OutTradeNo;
-
-    /// 签名类型
-    private String SignType;
-
     /// Key
     private String Key;
 
-    public RequestHandler PackageRequestHandler;
-    public String Sign;
+    private RequestHandler PackageRequestHandler;
 
-    /**
-    *@Author:Jrss
-    *@Desp:关闭订单 请求参数
-    */
-    public TenPayGetSignKeyRequestData(String mchId, String nonceStr, String key, String signType) {
-        if (signType == null || signType.equalsIgnoreCase("")) {
-            signType = "MD5";
-        }
-        MchId = mchId;
-        NonceStr = nonceStr;
-        SignType = signType;
-        Key = key;
+    /// 通过MD5签名算法计算得出的签名值，详见MD5签名生成算法
+    private String Sign;
+
+    public TenPayQueryBankRequestData() {
+
         //创建支付应答对象
         PackageRequestHandler = new RequestHandler();
         //初始化
         PackageRequestHandler.init();
-
         //设置package订单参数
-        PackageRequestHandler.setParameter("mch_id", this.MchId); //商户号
         PackageRequestHandler.setParameter("nonce_str", this.NonceStr); //随机字符串
+        PackageRequestHandler.setParameter("partner_trade_no", this.PartnerTradeNumber); //商户订单号
+        PackageRequestHandler.setParameter("mch_id", this.MchId); //商户号
         Sign = PackageRequestHandler.createMd5Sign("key", this.Key);
         PackageRequestHandler.setParameter("sign", Sign); //签名
+
     }
 
     public String getMchId() {
@@ -59,28 +49,20 @@ public class TenPayGetSignKeyRequestData {
         MchId = mchId;
     }
 
+    public String getPartnerTradeNumber() {
+        return PartnerTradeNumber;
+    }
+
+    public void setPartnerTradeNumber(String partnerTradeNumber) {
+        PartnerTradeNumber = partnerTradeNumber;
+    }
+
     public String getNonceStr() {
         return NonceStr;
     }
 
     public void setNonceStr(String nonceStr) {
         NonceStr = nonceStr;
-    }
-
-    public String getOutTradeNo() {
-        return OutTradeNo;
-    }
-
-    public void setOutTradeNo(String outTradeNo) {
-        OutTradeNo = outTradeNo;
-    }
-
-    public String getSignType() {
-        return SignType;
-    }
-
-    public void setSignType(String signType) {
-        SignType = signType;
     }
 
     public String getKey() {
