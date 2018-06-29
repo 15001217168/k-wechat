@@ -21,14 +21,14 @@ public class BaseCommonJsonSend {
      * @Desp:向需要AccessToken的API发送消息的公共方法
      */
     public static WxJsonResult send(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult) {
-        return (WxJsonResult) doSend(accessToken, urlFormat, data, sendType, timeOut, checkValidationResult);
+        return (WxJsonResult) doSend(accessToken, urlFormat, data, sendType, timeOut, checkValidationResult,WxJsonResult.class);
     }
 
     /**
      * @Author:Jrss
      * @Desp:向需要AccessToken的API发送消息的公共方法
      */
-    public static <T> T doSend(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult)
+    public static <T> T doSend(String accessToken, String urlFormat, Object data, CommonJsonSendType sendType, int timeOut, boolean checkValidationResult, Class<T> type)
 
     {
         try {
@@ -41,10 +41,10 @@ public class BaseCommonJsonSend {
 
             switch (sendType) {
                 case GET:
-                    return Get.GetJson(url);
+                    return Get.getJson(url, type);
                 case POST:
                     Map<String, Object> post = new HashMap<String, Object>();
-                    return Post.PostGetJson(url, post);
+                    return Post.postGetJson(url, post, null, null, type);
                 default:
                     return null;
             }
